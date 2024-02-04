@@ -1,0 +1,74 @@
+```{r, message=FALSE}
+#| echo: false
+library(tidyverse)
+library(dslabs)
+library(RColorBrewer)
+suppressMessages(library(tidyverse))
+
+
+```
+
+---
+title: "Problem Set 2: Effectiveness of Vaccines against Measles"
+format: html
+editor: visual
+---
+
+Examining data on measles in the United States, particularly pre- and post-introduction of the measles vaccine in 1963, reveals a compelling narrative of the pivotal role vaccines have played in disease control.
+
+# Substantial Decline in Measles Incidence Following Vaccination:
+
+Prior to the introduction of the measles vaccine in 1963, numerous individuals, particularly children, contracted measles annually. However, with the initiation of widespread vaccine administration, there was a remarkable and widespread decrease in measles cases throughout the nation. This underscores the vaccine's high effectiveness in preventing the disease.
+
+```{r}
+#| echo: false
+avg <- us_contagious_diseases |>
+  filter(disease=="Measles" & !state %in% c("Alaska", "Hawaii") & weeks_reporting >0) |>
+  group_by(year) |>
+  summarize(rate = sum(count/weeks_reporting, na.rm = TRUE)*52*10000/sum(population))
+
+avg |> ggplot (aes(year,rate)) + 
+  geom_line() + 
+  geom_vline(xintercept = 1963,color="blue") +
+  labs(x="Year",y="Measels cases per 10,000",title="Measles in United States over years") +
+  theme_bw()
+```
+
+Regional Disparities Preceding Vaccination, Yet a Uniform Reduction: While the prevalence of measles cases differed among states before the vaccine's introduction, a consistent decline in measles occurrences was observed nationwide post-vaccination. Prior to the vaccine, certain regions may have experienced higher case counts than others. However, following the vaccine's implementation, each state witnessed a reduction to fewer than 5 cases per 10,000 individuals. While occasional slight increases occurred, such spikes were infrequent, and the rates remained substantially lower than pre-vaccine levels.
+
+```{r}
+#| echo: false
+us_contagious_diseases |>
+  filter(disease == "Measles" & !state %in% c("Alaska", "Hawaii") & weeks_reporting > 0) |>
+  group_by(year, state) |>
+  summarize(rate = sum(count/weeks_reporting, na.rm = TRUE) * 52 * 10000 / sum(population), .groups = "drop") |>
+  ggplot() + 
+  geom_line(aes(year,rate,group=state),color = "grey50", alpha = 0.5) +
+  geom_line(data=avg, aes(year,rate))+
+  geom_vline(xintercept = 1963, color = "red") +
+  scale_y_continuous(trans = "sqrt", breaks = c(5, 25, 125, 300)) +
+  labs(x = "Year", y = "Measles rate per 10,000", title = "Measles Cases by U.S. states") +
+  theme_bw()
+```
+
+# Decline in Infection Rates Leads to States Ceasing Case Reporting:
+
+In the heat map, darker red indicates a higher incidence of measles cases, while lighter red signifies fewer cases. Following the introduction of the vaccine, a noticeable increase in lighter red hues emerged, indicating a reduction in the number of people falling ill. Intriguingly, a substantial amount of grey appears in the data, indicating that in certain states, the disease became so uncommon that reporting cases was discontinued. This is an encouraging indication, suggesting that in numerous locations, measles was nearly eradicated, largely attributed to the effectiveness of the vaccine.
+
+```{r}
+#| echo: false
+reds <- RColorBrewer::brewer.pal(9, "Reds")
+us_contagious_diseases |> 
+  filter(disease == "Measles") |>
+  group_by(year, state) |>
+  summarize(rate = sum(count/weeks_reporting) * 52 * 10000 / sum(population), .groups = "drop") |>
+  ggplot(aes(year, state, fill=rate)) +
+  geom_tile(color = "grey50") +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_fill_gradientn(colors = brewer.pal(9, "Reds"), na.value = "grey50", trans = "sqrt") +
+  geom_vline(xintercept = 1963, col = "blue") +
+  theme_bw() +
+  labs(title = "Measles", x = "", y = "")
+```
+
+In summary, the data both pre and post the implementation of the measles vaccine vividly illustrates the formidable and crucial role vaccines play in combating diseases. Through a substantial decrease in measles cases, the vaccine has safeguarded numerous individuals from illness and played a pivotal role in the near eradication of the disease in various regions.
