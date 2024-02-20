@@ -1,0 +1,115 @@
+---
+title: "Problem Set 1: Quadratic Equations"
+format: html
+editor: visual
+---
+
+## In this lesson we will learn how to apply quadratic equation and graphically demonstrate that our solution is correct
+
+```{r}
+# Define the quadratic equation solver function
+quadratic_solver <- function(a, b, c) {
+  discriminant <- b^2 - 4*a*c
+  
+  if (discriminant < 0) {
+    return(NULL)  # No real solutions for complex roots
+  } else {
+    root1 <- (-b + sqrt(discriminant)) / (2*a)
+    root2 <- (-b - sqrt(discriminant)) / (2*a)
+    return(c(root1, root2))
+  }
+}
+
+# Set the values for the first set of coefficients
+a <- 1
+b <- -1
+c <- -2
+
+# Solve the quadratic equation
+solutions <- quadratic_solver(a, b, c)
+cat("Solutions for the first set of coefficients:", solutions, "\n")
+```
+
+```{r, echo=FALSE, warning=FALSE}
+# Plot the graph for the first set of coefficients
+library(ggplot2)
+
+x_values <- seq(-3, 3, 0.1)
+y_values <- a * x_values^2 + b * x_values + c
+
+df <- data.frame(x = x_values, y = y_values)
+
+ggplot(df, aes(x, y)) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = solutions, linetype = "dashed", color = "red") +
+  labs(title = "Quadratic Equation Graph",
+       x = "x",
+       y = "f(x)") +
+  theme_minimal()
+
+# Save the graph as a PDF
+ggsave("quadratic_graph_1.pdf")
+
+
+```
+
+# Changing variables to a=1, b=2, c=5
+
+```{r}
+# Set the values for the first set of coefficients
+a <- 1
+b <- 2
+c <- 5
+
+# Solve the quadratic equation
+solutions <- quadratic_solver(a, b, c)
+cat("Solutions for the first set of coefficients:", solutions, "\n")
+
+# Plot the graph for the first set of coefficients
+library(ggplot2)
+
+x_values <- seq(-3, 3, 0.1)
+y_values <- a * x_values^2 + b * x_values + c
+
+df <- data.frame(x = x_values, y = y_values)
+
+ggplot(df, aes(x, y)) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = solutions, linetype = "dashed", color = "red") +
+  labs(title = "Quadratic Equation Graph",
+       x = "x",
+       y = "f(x)") +
+  theme_minimal()
+```
+
+# Changing variables to a=1, b=3, c=2
+
+```{r}
+# Set the values for the first set of coefficients
+a <- 1
+b <- 3
+c <- 2
+
+# Solve the quadratic equation
+solutions <- quadratic_solver(a, b, c)
+cat("Solutions for the first set of coefficients:", solutions, "\n")
+
+# Plot the graph for the first set of coefficients
+library(ggplot2)
+
+x_values <- seq(-3, 3, 0.1)
+y_values <- a * x_values^2 + b * x_values + c
+
+df <- data.frame(x = x_values, y = y_values)
+
+ggplot(df, aes(x, y)) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = solutions, linetype = "dashed", color = "red") +
+  labs(title = "Quadratic Equation Graph",
+       x = "x",
+       y = "f(x)") +
+  theme_minimal()
+```
